@@ -22,6 +22,6 @@ Proof-of-concept of a browser-based platform for users to share accounts in limi
 
 **Todo**
 
- - List item
+ - 
 
 *appleyapples is not responsible for ToS-breaking activity carried out on this platform*
