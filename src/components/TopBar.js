@@ -43,7 +43,7 @@ function TopBar(props) {
                             <p></p>
                         </BarItem>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={4.5}>
                         <BarItem>
                             {/* Status bar */}
                             <CardContent sx={{ padding: 0, margin: 'auto' }}>
@@ -56,7 +56,7 @@ function TopBar(props) {
                         <BarItem>
                             {/* Connect button */}
                             <CardContent sx={{ padding: 0, margin: 'auto' }}>
-                                <Typography>{ (props.connection == true) ? props.userAddress.substr(0, 10) + '...' : 'Connect' }</Typography>
+                                <Typography>{ (props.connection == true) ? props.userAddress.substr(0, 11) + '...' : 'Connect' }</Typography>
                             </CardContent>
                             <CardActions>
                                 <IconButton aria-label="Connect" onClick={ props.connectWallet } color={ (props.connection == true) ? 'success' : 'default' }>
