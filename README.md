@@ -23,5 +23,6 @@ Proof-of-concept of a browser-based platform for users to share digital goods/se
 
 **Todo**
 
- - 
+ - Figure out why purchases send ether to the contract address instead of item seller (tested on remix)
+ - Front-end for freemarket
 
