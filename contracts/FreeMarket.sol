@@ -35,18 +35,19 @@ contract FreeMarket {
 
     /// @notice One time purchase; transfers ether from buyer to seller based on price and quantity of the item purchased
     /// @dev No actual item implemented, currently just decrements item supply and prints to console
-    function buy(Item memory _item, uint16 _quantity) external payable {
-        require(_item.supply >= _quantity, 'Insufficient supply');
-        require(msg.value == _item.price * _quantity, 'Payment value invalid');
-        address payable seller = payable(_item.seller);
+    function buy(uint256 _itemId, uint16 _quantity) external payable {
+        Item memory itemCopy = itemCatalogue[_itemId];
+        require(itemCopy.supply >= _quantity, 'Insufficient supply');
+        require(msg.value == itemCopy.price * _quantity, 'Payment value invalid');
+        address payable seller = payable(itemCopy.seller);
         (bool success, ) = seller.call{value: msg.value}('');
         require(success, 'Payment error');
-        transactItem(_item, _quantity);
+        transactItem(itemCatalogue[_itemId], _quantity);
     }
 
     /// @notice Handles item transaction by decreasing supply of item in catalogue and prints to console
     /// @dev Implement actual item transfer and event in the future
-    function transactItem(Item memory _item, uint16 _quantity) private {
+    function transactItem(Item storage _item, uint16 _quantity) private {
         itemCatalogue[_item.id].supply -= _quantity;
         console.log(_quantity, _item.name, 'has been sold!');
     }
@@ -66,10 +67,10 @@ contract FreeMarket {
 
     /// @notice Remove item from catalogue
     /// @dev Only the seller can remove their item from the catalogue
-    function removeItem(Item memory _item) public onlySeller(_item) {
-        int index = getIndexFromId(_item.id);
+    function removeItem(uint256 _itemId) public onlySeller(itemCatalogue[_itemId]) {
+        int index = getIndexFromId(_itemId);
         if(index >= 0) {
-            delete(itemCatalogue[_item.id]);
+            delete(itemCatalogue[_itemId]);
             itemIdList[uint(index)] = itemIdList[itemIdList.length - 1];
             itemIdList.pop();
             // uint256[] memory itemIdListCopy = itemIdList; // make edits to storage array on a copy to reduce gas fees
