@@ -1,4 +1,4 @@
-# Digital store
+# Free Market
 
 **Description**
 
@@ -13,14 +13,15 @@ Proof-of-concept of a browser-based platform for users to share digital goods/se
 
 **Features TBD**
 
- - Products purchasable/rented with Ethereum
+ - Web-based market
+ - Products purchasable with Ethereum
  - Products organized in a grid of cards
- - Each card should display product name/type, product description/ToS, availably quantity, pricing
+ - Each card should display product name, description/ToS, availably quantity, pricing
+ - Each product may have an expiry date 
  - Rating for each product/user
- - 
+ - Owner of a product can create or remove an item from the catalogue
 
 **Todo**
 
  - 
 
-*appleyapples is not responsible for ToS-breaking activity carried out on this platform*
