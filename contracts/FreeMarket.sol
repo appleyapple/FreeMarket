@@ -3,10 +3,11 @@ pragma experimental ABIEncoderV2; // for passing structs into function parameter
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat/console.sol";
 
 
-/// @title FreeMarket
+/// @title Digital shop
 /// @author Henry Yip 
 /// @notice Contract should allow users to purchase an item with ether and post products for sale 
 contract FreeMarket {
@@ -31,7 +32,7 @@ contract FreeMarket {
 
     /// @notice Modifier for sellers to manage their own items
     modifier onlySeller(Item memory _item) {
-        require(msg.sender == _item.seller, 'Only the product owner can call this function');
+        require(msg.sender == _item.seller);
         _;
     }
 
@@ -42,10 +43,18 @@ contract FreeMarket {
         require(itemCopy.supply >= _quantity, 'Insufficient supply');
         require(msg.value == itemCopy.price * _quantity, 'Payment value invalid');
         address payable seller = payable(itemCopy.seller);
-        (bool success, ) = seller.call{value: msg.value}('');
+        // address payable seller = cyno;
+        (bool success, ) = seller.call{value: msg.value}("");
         require(success, 'Payment error');
         transactItem(itemCatalogue[_itemId], _quantity);
     }
+
+    // function sendViaCall(address payable _to) public payable {
+    //     // Call returns a boolean value indicating success or failure.
+    //     // This is the current recommended method to use.
+    //     (bool sent, bytes memory data) = _to.call{value: msg.value}("");
+    //     require(sent, "Failed to send Ether");
+    // }
 
     /// @notice Handles item transaction by decreasing supply of item in catalogue and prints to console
     /// @dev Implement actual item transfer and event in the future
@@ -90,6 +99,16 @@ contract FreeMarket {
             }
         }
         return -1;
+    }
+
+    /// @notice Custom getters function for itemIdList 
+    /// @dev Returns list of strings instead for JS readability
+    function getItemIdList() public view returns (string[] memory) {
+        string[] memory itemIdStrings = new string[](itemIdList.length);
+        for(uint i=0; i<itemIdList.length; i++) {
+            itemIdStrings[i] = (Strings.toString(itemIdList[i]));
+        }
+        return itemIdStrings;
     }
 
     
