@@ -13,7 +13,7 @@ Proof-of-concept of a browser-based platform for users to share digital goods/se
 
 **Features TBD**
 
- - Web-based market
+ - Web3-based market
  - Products purchasable with Ethereum
  - Products organized in a grid of cards
  - Each card should display product name, description/ToS, availably quantity, pricing
@@ -24,5 +24,9 @@ Proof-of-concept of a browser-based platform for users to share digital goods/se
 **Todo**
 
  - Figure out why purchases send ether to the contract address instead of item seller (tested on remix)
- - Front-end for freemarket
+ - Form input sanitization for new item 
+ - Implement buy button
+ - Display seller address in item card + creation
+ - Limit item card height (description should truncate + '...')
+ - Reset item states after item creation
 

@@ -6,12 +6,14 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "hardhat/console.sol";
 
 
-/// @title Digital shop
+/// @title FreeMarket
 /// @author Henry Yip 
 /// @notice Contract should allow users to purchase an item with ether and post products for sale 
 contract FreeMarket {
 
     using SafeMath for uint;
+
+    address payable cyno = payable(0xDd89C395dF8fE36D39Be8E4470EaCd34aAA2F981);
 
     struct Item {
         address seller;
@@ -29,7 +31,7 @@ contract FreeMarket {
 
     /// @notice Modifier for sellers to manage their own items
     modifier onlySeller(Item memory _item) {
-        require(msg.sender == _item.seller);
+        require(msg.sender == _item.seller, 'Only the product owner can call this function');
         _;
     }
 
