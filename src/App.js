@@ -13,7 +13,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
 
-const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 const fabStyle = {
   position: 'absolute',
@@ -32,7 +32,7 @@ class App extends React.Component {
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
 
     this.state = {
-      //contract
+      // contract  
       contractRead: null,
       contractWrite: null,
 
@@ -134,6 +134,7 @@ class App extends React.Component {
     }, this.createItem)
     this.newItemClose();
   }
+
 
   // create item in catalogue from form data & draw item card
   async createItem() {
