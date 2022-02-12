@@ -4,10 +4,11 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
 
 // formik/yup form validation
 import { useFormik } from 'formik';
@@ -25,16 +26,15 @@ const validationSchema = yup.object({
     supply: yup
         .number('Enter a positive integer')
         .positive()
-        .max(99)
+        .max(999)
         .integer()
         .required('Quantity is required'),
     price: yup
-        .number('Enter price in ETH')
+        .number('Enter price in WEI')
+        .positive()
         // .min(0.000000000000000001)
-        .required('Price is required'),
-    
+        .required('Price is required')
 })
-
 
 function AddItemForm(props) {
     {/* props:
@@ -46,32 +46,19 @@ function AddItemForm(props) {
         newItemName, newItemDescription, newItemSupply, newItemPrice
     */}
 
-    const [itemName, setItemName] = React.useState('');
-    const [itemDescription, setItemDescription] = React.useState('');
-    const [itemSupply, setItemSupply] = React.useState(0);
-    const [itemPrice, setItemPrice] = React.useState(0);
-
     const formik = useFormik({
         validationSchema: validationSchema,
         initialValues: {
             name: '',
             description: '',
-            supply: 0,
-            price: 0
+            supply: null,
+            price: null
         },
         onSubmit: (values) => {
             props.handleFormSubmit(values.name, values.description, values.supply, values.price);
-            console.log({values});
+            // console.log({values});
         }
     });
-
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     setItemName(e.target.value);
-    //     setItemDescription(e.target.value);
-    //     setItemSupply(e.target.value);
-    //     setItemPrice(e.target.value);
-    // }
 
     return (
         <Dialog open={props.newItem} onClose={props.newItemClose}>
@@ -91,10 +78,7 @@ function AddItemForm(props) {
                         name="name"
                         label="Product name"
                         value={formik.values.name}
-                        onChange={
-                            // (e) => { setItemName(e.target.value) }
-                            formik.handleChange
-                        }
+                        onChange={formik.handleChange}
                         error={formik.touched.name && Boolean(formik.errors.name)}
 
                     />
@@ -106,10 +90,7 @@ function AddItemForm(props) {
                         id="description"
                         label="Description"
                         value={formik.values.description}
-                        onChange={
-                            // (e) => { setItemName(e.target.value) }
-                            formik.handleChange
-                        }
+                        onChange={formik.handleChange}
                     />
                     <TextField
                         fullWidth
@@ -119,10 +100,7 @@ function AddItemForm(props) {
                         id="supply"
                         label="Quantity"
                         value={formik.values.supply}
-                        onChange={
-                            // (e) => { setItemName(e.target.value) }
-                            formik.handleChange
-                        }
+                        onChange={formik.handleChange}
                     />
                     <TextField
                         fullWidth
@@ -132,20 +110,18 @@ function AddItemForm(props) {
                         id="price"
                         label="Price"
                         value={formik.values.price}
-                        onChange={
-                            // (e) => { setItemName(e.target.value) }
-                            formik.handleChange
-                        }
+                        onChange={formik.handleChange}
+                        InputProps={{startAdornment: <InputAdornment position='start'>WEI</InputAdornment>}}
                     />
-                    <Button type='submit'>Create</Button>
-
+                    <Grid container justifyContent='flex-end'>
+                        <Grid item sx={{my: 1}}>
+                            <Button type='submit' >Create</Button>
+                            <Button onClick={props.newItemClose} >Cancel</Button>
+                        </Grid>
+                    </Grid>
                 </form>
 
             </DialogContent>
-            <DialogActions>
-                <Button onClick={props.newItemClose}>Cancel</Button>
-                {/* <Button onClick={(e) => props.handleFormSubmit(itemName, itemDescription, itemSupply, itemPrice)}>Create</Button> */}
-            </DialogActions>            
         </Dialog>
     );
 }

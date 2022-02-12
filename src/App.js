@@ -12,8 +12,7 @@ import Grid from '@mui/material/Grid';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
-
-const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const contractAddress = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9';
 
 const fabStyle = {
   position: 'absolute',
@@ -30,6 +29,7 @@ class App extends React.Component {
     this.newItemClose = this.newItemClose.bind(this);
     this.createItem = this.createItem.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.buyItem = this.buyItem.bind(this);
 
     this.state = {
       // contract  
@@ -54,9 +54,11 @@ class App extends React.Component {
       newItemDescription: '',
       newItemSupply: 0,
       newItemPrice: 0,
+      newItemSeller: ''
     };
   };
 
+  // connects webapp to metamask wallet to allow for transactions & item listing
   async connectWallet() {
     this.setState({ status: 'Loading...' })
     // connect to metamask
@@ -85,6 +87,7 @@ class App extends React.Component {
     this.setState({ status: '' })
   };
 
+  // connects webapp to catalogue stored on blockchain to display items on sale
   async connectCatalogue() {
     this.setState({ status: 'Loading...' })
     // connect to contract
@@ -103,13 +106,44 @@ class App extends React.Component {
             newItemName: catalogueItem.name,
             newItemDescription: catalogueItem.description,
             newItemSupply: catalogueItem.supply,
-            newItemPrice: ethers.utils.formatEther(catalogueItem.price)
+            newItemPrice: ethers.utils.formatEther(catalogueItem.price),
+            newItemSeller: catalogueItem.seller
           })
           this.setState({ itemCardList: [...this.state.itemCardList, this.createItemCard()] })
         } 
       } catch(err) {
         this.setState({ status: 'Error: Failed to connect to catalogue' });
       }
+    }
+    this.setState({ status: '' })
+  }
+
+  // uint256 itemId = uint256(keccak256(abi.encodePacked(_name, msg.sender)));
+  async buyItem(itemName, itemSeller, itemPrice, quantity) {
+    this.setState({ status: 'Loading...' })
+    // connect to metamask
+    if(typeof window.ethereum == 'undefined') {
+        this.setState({ status: 'Error: MetaMask is required to purchase items' });
+    } else {
+        try {
+            // connect wallet & contract
+            await window.ethereum.request({ method: 'eth_requestAccounts' })
+            .then(async result => {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const contract = new ethers.Contract(contractAddress, FreeMarket.abi, signer);
+                const readContract = new ethers.Contract(contractAddress, FreeMarket.abi, provider);
+                // calculate price to pay
+                const options = {value: ethers.utils.parseEther((itemPrice))};
+                const transaction = await contract.buy(readContract.getItemIdFromNameSeller(itemName, itemSeller), quantity, options);
+                await transaction.wait();
+                return transaction;
+            });
+        } catch(err) {
+            this.setState({ status: 'Error: Purchase failed' });
+            console.log(err);
+            return;
+        }
     }
     this.setState({ status: '' })
   }
@@ -124,22 +158,34 @@ class App extends React.Component {
   }
 
   // grabs form data and stores into states
-  async handleFormSubmit(name, description, supply, price) {
+  async handleFormSubmit(itemName, itemDescription, itemSupply, itemPrice) {
     this.setState({ status: 'Loading...' })
     this.setState({ 
-      newItemName: name,
-      newItemDescription: description,
-      newItemSupply: supply,
-      newItemPrice: price
+      newItemName: itemName,
+      newItemDescription: itemDescription,
+      newItemSupply: itemSupply,
+      newItemPrice: itemPrice,
+      newItemSeller: this.state.userAddress
     }, this.createItem)
     this.newItemClose();
   }
 
+  // sets form states back to initial empty values
+  resetFormStates() {
+    this.setState({
+      newItemName: '',
+      newItemDescription: '',
+      newItemSupply: 0,
+      newItemPrice: 0,
+      newItemSeller: ''
+    })
+  }
 
   // create item in catalogue from form data & draw item card
   async createItem() {
     if(typeof window.ethereum !== 'undefined') {
       try{
+        // write item details to catalogue
         const newItem = await this.state.contractWrite.createItem(
           this.state.newItemName,
           this.state.newItemDescription,
@@ -147,10 +193,11 @@ class App extends React.Component {
           this.state.newItemPrice,
         )
         await newItem.wait();
-        this.setState({ itemCardList: [...this.state.itemCardList, this.createItemCard()] });
+        // draw itemcard for new item 
+        this.setState({ itemCardList: [...this.state.itemCardList, this.createItemCard()] })
+        .then(this.resetFormStates);
       } catch(err) {
         this.setState({ status: 'Error: Failed to create new item' })
-        console.log(err);
       }
     }
     this.setState({ status:'' })
@@ -165,7 +212,8 @@ class App extends React.Component {
         newItemDescription={this.state.newItemDescription}
         newItemSupply={this.state.newItemSupply}
         newItemPrice={this.state.newItemPrice}
-        // newItemSeller={this.state.userAddress}
+        newItemSeller={this.state.newItemSeller}
+        buyItem={this.buyItem}
       />
     </Grid>
     );
