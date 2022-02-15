@@ -1,5 +1,5 @@
 import React from 'react';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import FreeMarket from './artifacts/contracts/FreeMarket.sol/FreeMarket.json';
 import TopBar from './components/TopBar';
 import ItemCard from './components/ItemCard';
@@ -12,7 +12,7 @@ import Grid from '@mui/material/Grid';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
-const contractAddress = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9';
+const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 
 const fabStyle = {
   position: 'absolute',
@@ -30,12 +30,9 @@ class App extends React.Component {
     this.createItem = this.createItem.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.buyItem = this.buyItem.bind(this);
+    this._isMounted = false;
 
     this.state = {
-      // contract  
-      contractRead: null,
-      contractWrite: null,
-
       // catalogue
       itemIdList: null,
       itemCatalogue: null,
@@ -53,7 +50,7 @@ class App extends React.Component {
       newItemName: '',
       newItemDescription: '',
       newItemSupply: 0,
-      newItemPrice: 0,
+      newItemPrice: '', // store price as string to avoid bignumber numeric fault (overflow)
       newItemSeller: ''
     };
   };
@@ -66,13 +63,12 @@ class App extends React.Component {
         this.setState({ status: 'Error: MetaMask is required to connect' });
     } else {
         try {
-            // connect wallet & contract
+            // create variable to store contract for contract calls?
             await window.ethereum.request({ method: 'eth_requestAccounts' })
             .then(result => {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
-                this.setState({ contractRead: new ethers.Contract(contractAddress, FreeMarket.abi, provider) });
-                this.setState({ contractWrite: new ethers.Contract(contractAddress, FreeMarket.abi, signer) });
+                const contract = new ethers.Contract(contractAddress, FreeMarket.abi, signer);
                 return result[0];
             })
             .then(result => {
@@ -89,7 +85,7 @@ class App extends React.Component {
 
   // connects webapp to catalogue stored on blockchain to display items on sale
   async connectCatalogue() {
-    this.setState({ status: 'Loading...' })
+    this._isMounted && this.setState({ status: 'Loading...' })
     // connect to contract
     if (typeof window.ethereum !== 'undefined') {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -97,25 +93,25 @@ class App extends React.Component {
       try {
         // get item catalogue
         let itemIdList = await contract.getItemIdList();
-        this.setState({ itemIdList: itemIdList });
+        this._isMounted && this.setState({ itemIdList: itemIdList });
         // draw each catalogue item to react app
         for(let i=0; i<this.state.itemIdList.length; i++) {
           const catalogueItem = await contract.itemCatalogue(this.state.itemIdList[i]);
           // console.log(catalogueItem.name, catalogueItem.description, catalogueItem.supply, ethers.utils.formatEther(catalogueItem.price), catalogueItem.seller.toString);
-          this.setState({ 
+          this._isMounted && this.setState({ 
             newItemName: catalogueItem.name,
             newItemDescription: catalogueItem.description,
             newItemSupply: catalogueItem.supply,
             newItemPrice: ethers.utils.formatEther(catalogueItem.price),
             newItemSeller: catalogueItem.seller
           })
-          this.setState({ itemCardList: [...this.state.itemCardList, this.createItemCard()] })
+          this._isMounted && this.setState({ itemCardList: [...this.state.itemCardList, this.createItemCard()] })
         } 
       } catch(err) {
-        this.setState({ status: 'Error: Failed to connect to catalogue' });
+        this._isMounted && this.setState({ status: 'Error: Failed to connect to catalogue' });
       }
     }
-    this.setState({ status: '' })
+    this._isMounted && this.setState({ status: '' })
   }
 
   // uint256 itemId = uint256(keccak256(abi.encodePacked(_name, msg.sender)));
@@ -160,6 +156,7 @@ class App extends React.Component {
   // grabs form data and stores into states
   async handleFormSubmit(itemName, itemDescription, itemSupply, itemPrice) {
     this.setState({ status: 'Loading...' })
+    console.log(typeof(itemPrice));
     this.setState({ 
       newItemName: itemName,
       newItemDescription: itemDescription,
@@ -176,7 +173,7 @@ class App extends React.Component {
       newItemName: '',
       newItemDescription: '',
       newItemSupply: 0,
-      newItemPrice: 0,
+      newItemPrice: '',
       newItemSeller: ''
     })
   }
@@ -185,19 +182,25 @@ class App extends React.Component {
   async createItem() {
     if(typeof window.ethereum !== 'undefined') {
       try{
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(contractAddress, FreeMarket.abi, signer);
         // write item details to catalogue
-        const newItem = await this.state.contractWrite.createItem(
+        const newItem = await contract.createItem(
           this.state.newItemName,
           this.state.newItemDescription,
           this.state.newItemSupply,
-          this.state.newItemPrice,
+          (this.state.newItemPrice), // Error: invalid BigNumber string (argument="value", value="8.888888888888889e+35", code=INVALID_ARGUMENT, version=bignumber/5.5.0)
         )
         await newItem.wait();
         // draw itemcard for new item 
+        this.setState({ newItemPrice: ethers.utils.formatEther(this.state.newItemPrice) }) // bandaid fix for incorrect price display 
         this.setState({ itemCardList: [...this.state.itemCardList, this.createItemCard()] })
         .then(this.resetFormStates);
       } catch(err) {
+        console.log(err)
         this.setState({ status: 'Error: Failed to create new item' })
+        return;
       }
     }
     this.setState({ status:'' })
@@ -220,7 +223,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.connectCatalogue();
+    this._isMounted = true;
+    this._isMounted && this.connectCatalogue();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
   
   render() {

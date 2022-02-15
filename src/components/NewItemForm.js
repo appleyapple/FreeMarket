@@ -26,13 +26,13 @@ const validationSchema = yup.object({
     supply: yup
         .number('Enter a positive integer')
         .positive()
+        .min(1)
         .max(999)
         .integer()
         .required('Quantity is required'),
     price: yup
-        .number('Enter price in WEI')
-        .positive()
-        // .min(0.000000000000000001)
+        .string('Enter price in WEI')
+        .matches(/^[0-9]\d*$/, 'Positive integers only')
         .required('Price is required')
 })
 
@@ -51,8 +51,8 @@ function AddItemForm(props) {
         initialValues: {
             name: '',
             description: '',
-            supply: null,
-            price: null
+            supply: '',
+            price: ''
         },
         onSubmit: (values) => {
             props.handleFormSubmit(values.name, values.description, values.supply, values.price);
@@ -105,7 +105,8 @@ function AddItemForm(props) {
                     <TextField
                         fullWidth
                         margin="dense"
-                        type="number"
+                        type="text"
+                        pattern="[0-9]*"
                         variant="standard"
                         id="price"
                         label="Price"
