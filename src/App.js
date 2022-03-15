@@ -1,5 +1,5 @@
 import React from 'react';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import FreeMarket from './artifacts/contracts/FreeMarket.sol/FreeMarket.json';
 import TopBar from './components/TopBar';
 import ItemCard from './components/ItemCard';
@@ -41,6 +41,7 @@ class App extends React.Component {
       userAddress: '',
       connection: false, // true: connected, false: not connected
       status: '', // Loading, Error, etc, empty: display contract address
+      loading: false,
       itemCardList: [], // list of <ItemCard>s to display
 
       // buttons
@@ -55,38 +56,23 @@ class App extends React.Component {
     };
   };
 
-  // connects webapp to metamask wallet to allow for transactions & item listing
-  async connectWallet() {
-    this.setState({ status: 'Loading...' })
-    // connect to metamask
-    if(typeof window.ethereum == 'undefined') {
-        this.setState({ status: 'Error: MetaMask is required to connect' });
-    } else {
-        try {
-            // create variable to store contract for contract calls?
-            await window.ethereum.request({ method: 'eth_requestAccounts' })
-            .then(result => {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                const contract = new ethers.Contract(contractAddress, FreeMarket.abi, signer);
-                return result[0];
-            })
-            .then(result => {
-                this.setState({ connection: true });
-                this.setState({ userAddress: result });
-                // console.log('Wallet connected @', this.userAddress, typeof(this.userAddress))
-            });
-        } catch(err) {
-            this.setState({ status: 'Error: Failed to connect' });
-        }
-    }
-    this.setState({ status: '' })
-  };
+  // Display all items for sale 
+  async loadFreeMarket() {
+    this.setState({ loading: true });
 
-  // connects webapp to catalogue stored on blockchain to display items on sale
-  async connectCatalogue() {
-    this._isMounted && this.setState({ status: 'Loading...' })
-    // connect to contract
+    // Connect to contract
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const freemarket = new ethers.Contract(contractAddress, FreeMarket.abi, signer);
+
+    // Fetch all items
+    const data = await freemarket.fetchMerchandiseAll();
+    const items = await Promise.all(data.map(async i => {
+      
+    }))
+
     if (typeof window.ethereum !== 'undefined') {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const contract = new ethers.Contract(contractAddress, FreeMarket.abi, provider);

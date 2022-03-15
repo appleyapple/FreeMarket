@@ -2,32 +2,36 @@
 
 **Description**
 
-Proof-of-concept of a browser-based platform for users to share digital goods/services in limited quantities in exchange for Ethereum.
+Proof-of-concept of a browser-based platform for users transact Ether in exchange for merchandise.
 
 
 **Primary goals**
 
- - Create React.js components for common features such as wallet connection, general user/UI information, etc. for future use
- - Solidity contract to administrate app features securely and robustly
- - Familiarize with Solidity/Ethers/React stack
+ - Allow for transactions between buyer and seller
+ - Sellers can list merchandise for sale 
 
 
-**Features TBD**
+**Features**
 
  - Web3-based market
- - Products purchasable with Ethereum
- - Products organized in a grid of cards
- - Each card should display product name, description/ToS, availably quantity, pricing
- - Each product may have an expiry date 
- - Rating for each product/user
- - Owner of a product can create or remove an item from the catalogue
+ - Merchandise purchasable with Ether
+ - Owner of merchandise can create or remove it from the market
+ - Each merchandise is represented by a token (ERC1155), which is transferred upon transaction as a receipt
+
+
+**Dev setup**
+
+ - contract remix environment: cd freemarket, remixd -s ., go to remix.ethereum.org
+ - webapp localhost:
 
 **Todo**
 
- - 
+ - Refactor to guard re-entry attacks @ FreeMarket.sol, https://docs.openzeppelin.com/contracts/4.x/api/security#ReentrancyGuard
+ - Blocking page (like pinterest) if MetaMask is not detected
+ - ?Allow sellers to update supply of merchandise
+ - ?Burn tokens when merchandise is removed from fm
 
  **Known bugs**
 
- - buy function (payable(address).call()/transfer()) in contract sends ether to contract instead of seller even when address is hardcoded, maybe needs withdraw function (think of how seller will withdraw)? https://docs.soliditylang.org/en/v0.8.11/common-patterns.html?highlight=transfer#withdrawal-from-contracts
-
+ - During merchandise transaction, buyer's ether is sent to contract instead of seller
 
