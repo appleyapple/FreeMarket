@@ -1,0 +1,68 @@
+await fm.getItemIdList()
+await fm.address
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.getItemIdList()
+await fm.createItem('panlid', 'shield', 99, 1)
+await fm.getItemIdList()
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.getItemIdList()
+await fm.address
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.address()
+await fm.address
+x
+const x = await fm.getItemIdList()
+x
+const x = await fm.getItemIdList()
+await fm.getItemIdList()
+fm.getItemIdList()
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.getItemIdList()
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.itemIdList(0)
+await fm.itemIdList('0')
+await fm.itemIdList[0]
+await fm.createItem('a', 'b', 1, 1)
+await fm.itemIdList[0]
+await fm.itemIdList('0')
+await fm.itemIdList(0)
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.itemIdList(0)
+await fm.createItem('panlid', 'shield', 20, 1)
+await fm.itemIdList(0)
+await fm.address
+await fm.itemIdList(0)
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.getItemIdList(0)
+await fm.getItemIdList()
+fm.getItemIdList()
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.getItemIdList()
+await fm.itemIdList(0)
+await fm.itemIdList(0).toString()
+await fm.itemIdList(0)
+fm.itemIdList(0)
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+await fm.itemIdList(0)
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0")
+await fm.itemCatalogue("64408278991389015928160017885354880587993142842410877358591968684222128863818")
+await fm.itemCatalogue(64408278991389015928160017885354880587993142842410877358591968684222128863818)
+await fm.getItemIdList()
+const fm = await (await ethers.getContractFactory("FreeMarket")).attach("0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0")
+await freeMarket.itemCatalogue("64408278991389015928160017885354880587993142842410877358591968684222128863818")
+await freeMarket.itemCatalogue("64408278991389015928160017885354880587993142842410877358591968684222128863818"
+await freeMarket.itemIdList(0)
+await freeMarket.itemIdList()
+await freeMarket.itemIdList
+freeMarket.itemIdList(0)
+freeMarket.itemIdList()
+FreeMarket.itemIdList()
+itemIdList()
+itemIdList
+itemIdList[0]
+const freeMarket = await FreeMarket.attach("0x5fbdb2315678afecb367f032d93f642f64180aa3")
+const FreeMarket = await ethers.getContractFactory("FreeMarket")
+const Token = await ethers.getContractFactory("Token")
+itemIdList[0]
+getItemIdList()
+itemIdList()
