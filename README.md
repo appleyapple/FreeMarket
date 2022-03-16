@@ -11,7 +11,7 @@ Proof-of-concept of a browser-based platform for users transact Ether in exchang
  - Sellers can list merchandise for sale 
 
 
-**Features**
+**Core features**
 
  - Web3-based market
  - Merchandise purchasable with Ether
@@ -21,17 +21,25 @@ Proof-of-concept of a browser-based platform for users transact Ether in exchang
 
 **Dev setup**
 
- - contract remix environment: cd freemarket, remixd -s ., go to remix.ethereum.org
- - webapp localhost:
+ - Deploy contract in remix environment: cd freemarket, remixd -s ., go to remix.ethereum.org
+ - Run contract tests: npx hardhat test
 
-**Todo**
+ - Deploy contract to localhost: npx hardhat compile, npx hardhat node, npx hardhat run scripts/deploy.js --network localhost
+ - webapp localhost: npx run dev
 
+**Todo & additional features**
+
+ - Allow for purchases of variable quantity
+ - Show supply of merchandise
+ - Out-of-stock/unavailable alert upon purchasing more than available supply
+ - Make it look better
  - Refactor to guard re-entry attacks @ FreeMarket.sol, https://docs.openzeppelin.com/contracts/4.x/api/security#ReentrancyGuard
  - Blocking page (like pinterest) if MetaMask is not detected
  - ?Allow sellers to update supply of merchandise
  - ?Burn tokens when merchandise is removed from fm
+ - ?Wipe fm every month, subscribed users are not removed
 
  **Known bugs**
 
- - During merchandise transaction, buyer's ether is sent to contract instead of seller
+ - ~~During merchandise transaction, buyer's ether is sent to contract instead of seller~~
 

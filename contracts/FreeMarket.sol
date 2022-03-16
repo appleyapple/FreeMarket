@@ -49,7 +49,6 @@ contract FreeMarket is ERC1155, ERC1155Receiver, Ownable {
         uint256 _merchandiseId
     );
 
-    /// @dev Not sure if empty string breaks anything; usually it is a uri with {id} substring and tokens uri is just the {id} substring
     constructor() ERC1155('') {
     }
 
