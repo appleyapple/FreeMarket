@@ -29,9 +29,9 @@ Proof-of-concept of a browser-based platform for users transact Ether in exchang
  - Out-of-stock/unavailable alert upon purchasing more than available supply
  - Blocking page (like pinterest) if MetaMask is not detected
  - Update front-end to better suit dapp features and display UI elements properly; front-end is currently significantly inspired by https://github.com/dabit3/polygon-ethereum-nextjs-marketplace for faster dev time
- - ?Wipe fm every month, subscribed users are not removed
- - ~~?Burn tokens when merchandise is removed from fm~~
- - ~~?My orders page~~ Implemented as My Receipts
+ - Wipe fm every month, subscribed users are not removed?
+ - ~~Burn tokens when merchandise is removed from fm~~
+ - ~~My orders page~~ Implemented as My Receipts
  - ~~Allow for purchases of variable quantity~~
  - ~~Show supply of merchandise~~
  - ~~Guard re-entry attacks @ FreeMarket.sol, https://docs.openzeppelin.com/contracts/4.x/api/security#ReentrancyGuard~~
