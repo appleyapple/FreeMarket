@@ -9,11 +9,17 @@ import Freemarket from '../artifacts/contracts/FreeMarket.sol/FreeMarket.json'
 export default function Catalogue() {
 
   const [catalogue, setCatalogue] = useState([])
+  const [quantity, setQuantity] = useState(1) // May need to isolate to avoid multiple changes from different merchandise
   const [loadingState, setLoadingState] = useState('not-loaded')
 
   useEffect(() => {
     loadCatalogue()
   }, [])
+
+  function handleFormQuantity(event) {
+    setQuantity(event.target.value.replace(/\D/,''))
+    // console.log(event.target.value.replace(/\D/,''))
+  }
 
   async function loadCatalogue() {
     
@@ -51,12 +57,18 @@ export default function Catalogue() {
     const contract = new ethers.Contract(freemarketAddress, Freemarket.abi, signer)
 
     // Buyer pays for merchandise
-    const price = ethers.utils.parseUnits(merchandise.price.toString(), 'ether')   
-    const transaction = await contract.transactMerchandise(merchandise.merchandiseId, quantity, {
-      value: price
-    })
-    await transaction.wait()
-    loadCatalogue()
+    try{
+      const price = ethers.utils.parseUnits((merchandise.price * quantity).toString(), 'ether')
+      const transaction = await contract.transactMerchandise(merchandise.merchandiseId, quantity, {
+        value: price
+      })
+      await transaction.wait()
+      loadCatalogue()
+
+    // Alert if transaction failed
+    } catch(err) {
+      console.log('Insufficient supply or funds')
+    }
   }
 
   if (loadingState === 'loaded' && !catalogue.length) return (<h1 className="px-20 py-10 text-3xl">Freemarket is empty</h1>)
@@ -77,7 +89,8 @@ export default function Catalogue() {
                 <div className="p-4 bg-black">
                   <p className="text-2xl font-bold text-white">{merchandise.price} ETH</p>
                   <p className="text-2xl font-bold text-white">{merchandise.supply} left</p>
-                  <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => purchase(merchandise, 1)}>Buy</button>
+                  <input type={'number'} min={1} max={99} value={quantity} onChange={handleFormQuantity}/>
+                  <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => purchase(merchandise, quantity)}>Buy</button>
                 </div>
               </div>
             ))

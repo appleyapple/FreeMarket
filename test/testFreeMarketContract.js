@@ -58,6 +58,8 @@ describe('FreeMarket', function() {
         expect(merchandiseFromStoreA.length).to.equal(2);
         merchandiseAll = await freemarket.fetchMerchandiseAll();
         expect(merchandiseAll.length).to.equal(2);
+        tokensLeft = await freemarket.balanceOf(freemarket.address, 3);
+        expect(tokensLeft).to.equal(0);
 
         // // Log all in-stock merchandise to console
         // merchandiseAll = await Promise.all(merchandiseAll.map(async i => {
@@ -135,6 +137,51 @@ describe('FreeMarket', function() {
         // Customer tries to remove merchandise from FreeMarket
         merchandiseFromStoreA = await freemarket.fetchMerchandiseFrom(storeA.address);
         expect(merchandiseFromStoreA.length).to.equal(1);
+
+    });
+
+    it('Should return the receipts (merchandiseIds) of an account', async () => {
+        
+        // Deploy FreeMarket contract
+        const FreeMarket = await ethers.getContractFactory('FreeMarket');
+        const freemarket = await FreeMarket.deploy();
+        await freemarket.deployed();
+
+        // First address deploys contract, rest are addresses of users
+        const [_, storeA, customerA] = await ethers.getSigners();
+
+        // StoreA adds merchandise to FreeMarket
+        await freemarket.connect(storeA).addMerchandise( // id=1
+            'https://fm.com/one',
+            10, //supply
+            ethers.utils.parseUnits('1', 'ether') // price
+        );
+        await freemarket.connect(storeA).addMerchandise( // id=2
+            'https://fm.com/two',
+            10, //supply
+            ethers.utils.parseUnits('0.5', 'ether') // price
+        );
+        await freemarket.connect(storeA).addMerchandise( // id=3
+            'https://fm.com/three',
+            10, //supply
+            ethers.utils.parseUnits('3', 'ether') // price
+        );
+
+
+        // Customer buys merchandise from StoreA
+        await freemarket.connect(customerA).transactMerchandise(
+            1, // merchandiseId
+            2, // quantity
+            {value: ethers.utils.parseUnits('2', 'ether')} // payment
+        );
+        await freemarket.connect(customerA).transactMerchandise(
+            2, // merchandiseId
+            1, // quantity
+            {value: ethers.utils.parseUnits('0.5', 'ether')} // payment
+        );
+
+        customerReceipts = await freemarket.fetchReceiptsFrom(customerA.address);
+        console.log(customerReceipts);
 
     });
 });

@@ -22,6 +22,11 @@ function MyApp({ Component, pageProps }) {
               My shop
             </a>
           </Link>
+          <Link href="/my-receipts">
+            <a className="mr-6 text-pink-500">
+              My receipts
+            </a>
+          </Link>
         </div>
       </nav>
       <Component {...pageProps} />
