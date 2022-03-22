@@ -1,1 +1,1 @@
-export const freemarketAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
+export const freemarketAddress = '0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82';

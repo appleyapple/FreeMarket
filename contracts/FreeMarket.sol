@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat/console.sol";
 
@@ -13,7 +14,7 @@ import "hardhat/console.sol";
 /// @title FreeMarket
 /// @author Henry Yip 
 /// @notice Contract should allow users to list merchandise for sale and transact Ether in exchange for merchandise 
-contract FreeMarket is ERC1155, ERC1155Receiver, Ownable {
+contract FreeMarket is ERC1155, ERC1155Receiver, Ownable, ReentrancyGuard {
 
     using SafeMath for uint;
     using Counters for Counters.Counter;
@@ -87,15 +88,15 @@ contract FreeMarket is ERC1155, ERC1155Receiver, Ownable {
     }
 
     /// @notice For sellers to remove item from FreeMarket
-    /// @dev TODO Burn tokens 
     function removeMerchandise(uint256 _merchandiseId) external onlySeller(idToMerchandise[_merchandiseId]) {
+        _burn(address(this), _merchandiseId, balanceOf(address(this), _merchandiseId));
         delete(idToMerchandise[_merchandiseId]);
         merchandiseExpired.increment();
     }
 
     /// @notice Transfers Ether from buyer to seller based on price and quantity of the merchandise purchased
     /// @dev BUG Transferring Ether sends to contract and not the seller
-    function transactMerchandise(uint256 _merchandiseId, uint16 _quantity) external payable {
+    function transactMerchandise(uint256 _merchandiseId, uint16 _quantity) nonReentrant external payable {
         require(idToMerchandise[_merchandiseId].supply >= _quantity, 'Insufficient supply');
         require(msg.value == idToMerchandise[_merchandiseId].price * _quantity, 'Invalid payment value');
         
@@ -162,6 +163,27 @@ contract FreeMarket is ERC1155, ERC1155Receiver, Ownable {
         }
 
         return merchandise;
+    }
+
+    /// @notice Gets all merchandise tokens (receipts) from a specified address
+    /// @dev Returns array of quantity of each merchandise puchased indexed by merchandiseId
+    function fetchReceiptsFrom(address _address) public view returns (uint256[] memory) {
+
+        // Initialize arrays to query balance of all merchandises
+        uint arraySize = merchandiseIds.current();
+        address[] memory accountAddress = new address[](arraySize);
+        uint256[] memory idArray = new uint256[](arraySize);
+        for(uint i=0; i<arraySize; i++) {
+            accountAddress[i] = _address;
+            idArray[i] = i+1;
+        }
+
+        return balanceOfBatch(accountAddress, idArray);
+    }
+
+    /// @notice Gets merchandise token by merchandiseId
+    function fetchMerchandiseById(uint256 _merchandiseId) public view returns (Merchandise memory) {
+        return idToMerchandise[_merchandiseId];
     }
 
     /// @notice Allow for retrieval of URI in token metadata
