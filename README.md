@@ -2,7 +2,7 @@
 
 **Description**
 
-Proof-of-concept of a browser-based platform for users transact Ether in exchange for merchandise. 
+Proof-of-concept of a browser-based platform for users transact Ether in exchange for merchandise. Requires MetaMask browser extension.
 
 
 **Core features**
@@ -22,10 +22,14 @@ Proof-of-concept of a browser-based platform for users transact Ether in exchang
 
 
 **Deploy locally**
-
- - Deploy contract to localhost: npx hardhat compile, npx hardhat node, npx hardhat run scripts/deploy.js --network localhost
- - webapp localhost: npm run dev
- - metamask -> settings -> advanced -> reset account (general bugfix for subsequent local deployments)
+ 
+ - Add local test network to Metamask: Metamask -> settings -> networks -> add network {network name: Localhost 8545, RPC URL: http://localhost:8545, chain ID: 1337, Currency symbol: ETH}
+ - Install dependencies: npm install
+ - Start local node: (NEW TERMINAL) npx hardhat compile, npx hardhat node, add one of the accounts listed to MetaMask
+ - Deploy contract to localhost: (NEW TERMINAL) npx hardhat run scripts/deploy.js --network localhost
+ - Update contract address in fmAddress.js with output of previous command
+ - Start webapp: (NEW TERMINAL) npm run dev
+ - metamask -> settings -> advanced -> reset account (general fix for bugs related to Nonce)
 
 
 **Todo & additional features**
