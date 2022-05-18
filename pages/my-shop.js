@@ -2,7 +2,6 @@ import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Web3Modal from 'web3modal'
-import { useRouter } from 'next/router'
 
 import { freemarketAddress } from '../fmAddress'
 import Freemarket from '../artifacts/contracts/FreeMarket.sol/FreeMarket.json'
@@ -12,7 +11,6 @@ export default function MyShop() {
   const [myAccount, setMyAccount] = useState(null)
   const [myCatalogue, setMyCatalogue] = useState([])
   const [loadingState, setLoadingState] = useState('not-loaded')
-  const router = useRouter()
 
   useEffect(() => {
     loadMyShop()
@@ -28,6 +26,26 @@ export default function MyShop() {
       setMyAccount(myAddress[0])
       return true
     }
+  }
+
+  // Unlist merchandise for sale 
+  async function removeMerchandiseFromCatalogue(merchandise) {
+    
+    // Try to connect to Ethereum wallet
+    await connectAccount()
+    .then(async () => {
+      const web3Modal = new Web3Modal()
+      const connection = await web3Modal.connect()
+      const provider = new ethers.providers.Web3Provider(connection)
+      const signer = provider.getSigner()
+      const contract = new ethers.Contract(freemarketAddress, Freemarket.abi, signer)
+      
+      // Remove merchandise from catalogue
+      let transaction = await contract.removeMerchandise(merchandise.merchandiseId)
+      await transaction.wait()
+      
+      location.reload()
+    })
   }
 
   async function loadMyShop() {
@@ -77,7 +95,7 @@ export default function MyShop() {
                 <img src={merchandise.image} className="rounded" />
                 <div className="p-4 bg-black">
                   <p className="text-2xl font-bold text-white">Price - {merchandise.price} Eth</p>
-                  <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => console.log('todo')}>Edit</button>
+                  <button className="mt-4 w-full bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={() => {removeMerchandiseFromCatalogue(merchandise)}}>Unlist</button>
                 </div>
               </div>
             ))

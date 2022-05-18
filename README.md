@@ -15,21 +15,27 @@ Proof-of-concept of a browser-based platform for users transact Ether in exchang
  - Each merchandise is represented by a token (ERC1155), which is transferred upon transaction like a receipt
 
 
-**Dev setup**
+**Debugging**
 
  - Deploy contract in remix environment: cd freemarket, remixd -s ., go to remix.ethereum.org
  - Run contract tests: npx hardhat test
 
+
+**Deploy locally**
+
  - Deploy contract to localhost: npx hardhat compile, npx hardhat node, npx hardhat run scripts/deploy.js --network localhost
  - webapp localhost: npm run dev
+ - metamask -> settings -> advanced -> reset account (general bugfix for subsequent local deployments)
+
 
 **Todo & additional features**
 
- - Form validation
+ - Improve form validation
  - Out-of-stock/unavailable alert upon purchasing more than available supply
  - Blocking page (like pinterest) if MetaMask is not detected
- - Update front-end to better suit dapp features and display UI elements properly; front-end is currently significantly inspired by https://github.com/dabit3/polygon-ethereum-nextjs-marketplace for faster dev time
- - Wipe fm every month, subscribed users are not removed?
+ - Allow multiple images for merchandise
+ - ~~Fixed image size and reorganized card info UI~~
+ - ~~Option to remove merchandise from catalogue~~
  - ~~Burn tokens when merchandise is removed from fm~~
  - ~~My orders page~~ Implemented as My Receipts
  - ~~Allow for purchases of variable quantity~~

@@ -2,7 +2,6 @@ import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Web3Modal from 'web3modal'
-import { useRouter } from 'next/router'
 
 import { freemarketAddress } from '../fmAddress'
 import Freemarket from '../artifacts/contracts/FreeMarket.sol/FreeMarket.json'
@@ -12,7 +11,6 @@ export default function MyReceipts() {
   const [myAccount, setMyAccount] = useState(null)
   const [myReceipts, setMyReceipts] = useState([])
   const [loadingState, setLoadingState] = useState('not-loaded')
-  const router = useRouter()
 
   useEffect(() => {
     loadMyReceipts()
