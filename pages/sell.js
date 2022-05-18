@@ -15,20 +15,17 @@ export default function Sell() {
   const [formInput, updateFormInput] = useState({ name: '', description: '', supply: '',  price: ''})
   const router = useRouter()
 
-  // Upload merchandise image to IPFS and save URL to state
+  // Upload merchandise images to IPFS and save URL to state
   async function onChange(e) {
-    const file = e.target.files[0]
+    const files = e.target.files[0]
+    // console.log(files[0])
     try {
-      const added = await client.add(
-        file,
-        {
-          progress: (prog) => console.log(`received: ${prog}`)
-        }
-      )
+      const added = await client.add(files)
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
       setFileUrl(url)
+      console.log(url)
     } catch (error) {
-      console.log('Error uploading file: ', error)
+      console.log('Error uploading files: ', error)
     }  
   }
 
@@ -46,9 +43,10 @@ export default function Sell() {
     try {
       const added = await client.add(data)
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
+      console.log(url)
       return url
     } catch (error) {
-      console.log('Error uploading file: ', error)
+      console.log('Error uploading files: ', error)
     }  
   }
 
@@ -76,34 +74,39 @@ export default function Sell() {
           placeholder="Name"
           className="mt-8 border rounded p-4"
           onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
+          required
         />
         <textarea
           placeholder="Description"
           className="mt-2 border rounded p-4"
           onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
+          required
         />
         <input
           placeholder="Supply"
           className="mt-2 border rounded p-4"
           onChange={e => updateFormInput({ ...formInput, supply: e.target.value })}
+          required
         />
         <input
           placeholder="Price in ETH"
           className="mt-2 border rounded p-4"
           onChange={e => updateFormInput({ ...formInput, price: e.target.value })}
+          required
         />
         <input
-          type="file"
+          type="file" multiple
           name="Merchandise"
           className="my-4"
           onChange={onChange}
+          required
         />
         {
           fileUrl && (
             <img className="rounded mt-4" width="350" src={fileUrl} />
           )
         }
-        <button onClick={addMerchandiseToCatalogue} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
+        <button onClick={addMerchandiseToCatalogue} className="font-bold mt-4 bg-blue-500 text-white rounded p-4 shadow-lg">
           Add merchandise to Freemarket
         </button>
       </div>

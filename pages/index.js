@@ -9,7 +9,7 @@ import Freemarket from '../artifacts/contracts/FreeMarket.sol/FreeMarket.json'
 export default function Catalogue() {
 
   const [catalogue, setCatalogue] = useState([])
-  const [quantity, setQuantity] = useState(1) // May need to isolate to avoid multiple changes from different merchandise
+  const [quantity, setQuantity] = useState(1) // May need to isolate for each merchandise to avoid multiple changes from different merchandise
   const [loadingState, setLoadingState] = useState('not-loaded')
 
   useEffect(() => {
@@ -18,7 +18,6 @@ export default function Catalogue() {
 
   function handleFormQuantity(event) {
     setQuantity(event.target.value.replace(/\D/,''))
-    // console.log(event.target.value.replace(/\D/,''))
   }
 
   async function loadCatalogue() {
@@ -78,19 +77,19 @@ export default function Catalogue() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
           {
             catalogue.map((merchandise, i) => (
-              <div key={i} className="border shadow rounded-xl overflow-hidden">
-                <img src={merchandise.image} />
-                <div className="p-4">
-                  <p style={{ height: '64px' }} className="text-2xl font-semibold">{merchandise.name}</p>
+              <div key={i} className="relative border shadow rounded-xl overflow-hidden">
+                <img className='object-cover h-48 w-full' src={merchandise.image} />
+                <div className="h-50 p-4">
+                  <p style={{ height: '32px' }} className="text-2xl font-semibold">{merchandise.name}</p>
                   <div style={{ height: '70px', overflow: 'hidden' }}>
                     <p className="text-gray-400">{merchandise.description}</p>
                   </div>
                 </div>
-                <div className="p-4 bg-black">
-                  <p className="text-2xl font-bold text-white">{merchandise.price} ETH</p>
-                  <p className="text-2xl font-bold text-white">{merchandise.supply} left</p>
-                  <input type={'number'} min={1} max={99} value={quantity} onChange={handleFormQuantity}/>
-                  <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => purchase(merchandise, quantity)}>Buy</button>
+                <div className="static bottom-0 p-4">
+                  <p className="text-xl font-bold">{merchandise.price} ETH, {merchandise.supply} left</p>
+                  <button className="pt-2 mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={() => purchase(merchandise, quantity)}>Buy</button>
+                  <label className="pt-4 ml-2">Quantity: </label>
+                  <input className="w-10" type={'number'} min={1} max={99} value={quantity} onChange={handleFormQuantity}/>
                 </div>
               </div>
             ))
