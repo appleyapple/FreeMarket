@@ -27,7 +27,7 @@ Proof-of-concept of a browser-based platform for users transact Ether in exchang
  3. Start local node: (NEW TERMINAL) npx hardhat compile, npx hardhat node
  4. Switch to Localhost 8545 Network: Metamask -> Ethereum Mainnet (Top dropdown) -> Localhost 8545; skip step 5 if successfully connected to Localhost 8545
  5. Add Localhost 8545 network to Metamask if not already listed: Metamask -> settings -> networks -> add network {network name: Localhost 8545, RPC URL: http://localhost:8545, chain ID: 1337, Currency symbol: ETH}
- 6. Import test account: metamask -> top right icon -> import account -> one of the accounts listed from output of step 3 to MetaMask
+ 6. Import test account: metamask -> top right icon -> import account -> one of the accounts listed from output of step 3 (npx hardhat node) to MetaMask
  7. Deploy contract to localhost: (NEW TERMINAL) npx hardhat run scripts/deploy.js --network localhost
  8. Update contract address in fmAddress.js with output of previous command (it will probably be the same)
  9. Start webapp: (NEW TERMINAL) npm run dev
